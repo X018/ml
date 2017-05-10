@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# perceptron_plt.py
+# perceptron.py
 
 """
 Created by jin.xia on May 09 2017
