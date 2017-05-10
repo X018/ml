@@ -11,7 +11,6 @@ Created by jin.xia on May 09 2017
 import os
 import operator
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 class perceptron_dual():
@@ -42,13 +41,13 @@ class perceptron_dual():
 
 
 	def calculate_gram_mat(self, training_X):
-		return np.matmul(training_X, training_X.T)
-		# row_num = col_num = training_X.shape[0]
-		# gram_matrix = np.zeros((row_num, col_num))
-		# for row in range(row_num):
-		# 	for col in range(col_num):
-		# 		gram_matrix[row][col] = np.dot(training_X[row], training_X[col])
-		# return gram_matrix
+		# return np.matmul(training_X, training_X.T)
+		row_num = col_num = training_X.shape[0]
+		gram_matrix = np.zeros((row_num, col_num))
+		for row in range(row_num):
+			for col in range(col_num):
+				gram_matrix[row][col] = np.dot(training_X[row], training_X[col])
+		return gram_matrix
 
 
 	def is_classify_error(self, training_X, training_Y, gram_matrix, idx):
@@ -84,18 +83,18 @@ class perceptron_dual():
 		self.b += self.learning_rate * y
 
 
-	def plt_learning_plane(self, training_X, training_Y, line_plt=True):
-		plt.figure()
-		training_num = training_X.shape[0]
-		for i in range(training_num):
-			marker = (training_Y[i] == 1 and 'o') or 'x'
-			plt.scatter(training_X[i][0], training_X[i][1], s=50, marker=marker)
+	# def plt_learning_plane(self, training_X, training_Y, line_plt=True):
+	# 	plt.figure()
+	# 	training_num = training_X.shape[0]
+	# 	for i in range(training_num):
+	# 		marker = (training_Y[i] == 1 and 'o') or 'x'
+	# 		plt.scatter(training_X[i][0], training_X[i][1], s=50, marker=marker)
 
-		if line_plt:
-			axis_matrix = training_X[:,0]
-			x = np.linspace(np.min(axis_matrix), np.max(axis_matrix), 100)
-			y = -(self.w[0] * x + self.b) / self.w[1]
-			plt.plot(x, y)
+	# 	if line_plt:
+	# 		axis_matrix = training_X[:,0]
+	# 		x = np.linspace(np.min(axis_matrix), np.max(axis_matrix), 100)
+	# 		y = -(self.w[0] * x + self.b) / self.w[1]
+	# 		plt.plot(x, y)
 
-		plt.show()
+	# 	plt.show()
 

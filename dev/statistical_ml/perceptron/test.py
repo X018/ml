@@ -27,6 +27,6 @@ print(Y)
 # per.plt_learning_plane(X, Y)
 
 per_dual = perceptron_dual.perceptron_dual()
-per_dual.plt_learning_plane(X, Y, False)
+# per_dual.plt_learning_plane(X, Y, False)
 per_dual.learning(X, Y)
-per_dual.plt_learning_plane(X, Y)
+# per_dual.plt_learning_plane(X, Y)

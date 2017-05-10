@@ -11,7 +11,6 @@ Created by jin.xia on May 09 2017
 import os
 import operator
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 # 
@@ -61,22 +60,6 @@ class perceptron:
 		for i in range(feature_num):
 			self.w[i] += self.learning_rate * x[i] * y
 		self.b += self.learning_rate * y
-
-
-	def plt_learning_plane(self, training_X, training_Y, line_plt=True):
-		plt.figure()
-		training_num = training_X.shape[0]
-		for i in range(training_num):
-			marker = (training_Y[i] == 1 and 'o') or 'x'
-			plt.scatter(training_X[i][0], training_X[i][1], s=50, marker=marker)
-
-		if line_plt:
-			axis_matrix = training_X[:,0]
-			x = np.linspace(np.min(axis_matrix), np.max(axis_matrix), 100)
-			y = -(self.w[0] * x + self.b) / self.w[1]
-			plt.plot(x, y)
-
-		plt.show()
 
 
 
