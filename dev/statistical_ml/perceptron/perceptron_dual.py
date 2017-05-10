@@ -51,13 +51,13 @@ class perceptron_dual():
 
 
 	def is_classify_error(self, training_X, training_Y, gram_matrix, idx):
-		fx = self.calculate_fx(training_X, training_Y, gram_matrix, idx)
+		fx = self.calculate_training_fx(training_X, training_Y, gram_matrix, idx)
 		# yi(∑j=1Nαjyjxj⋅xi+b)≤0
 		loss = fx * training_Y[idx]
 		return loss <= 0
 
 
-	def calculate_fx(self, training_X, training_Y, gram_matrix, idx):
+	def calculate_training_fx(self, training_X, training_Y, gram_matrix, idx):
 		# ∑j=1Nαjyjxj⋅xi+b
 		fx = 0
 		num = training_Y.shape[0]
@@ -74,7 +74,7 @@ class perceptron_dual():
 		feature_num = shape[1]
 		self.w = np.zeros(feature_num)
 		for i in range(training_num):
-			self.w += self.α[i] * training_Y[i] * training_X[i]
+			self.w = self.w + self.α[i] * training_Y[i] * training_X[i]
 		print('[percetron_dual] try w b : ', self.w, self.b)
 
 
@@ -83,18 +83,18 @@ class perceptron_dual():
 		self.b += self.learning_rate * y
 
 
-	# def plt_learning_plane(self, training_X, training_Y, line_plt=True):
-	# 	plt.figure()
-	# 	training_num = training_X.shape[0]
-	# 	for i in range(training_num):
-	# 		marker = (training_Y[i] == 1 and 'o') or 'x'
-	# 		plt.scatter(training_X[i][0], training_X[i][1], s=50, marker=marker)
+	def predict(self, X):
+		num = X.shape[0]
+		return [self.calculate_fx(x) for x in X]
 
-	# 	if line_plt:
-	# 		axis_matrix = training_X[:,0]
-	# 		x = np.linspace(np.min(axis_matrix), np.max(axis_matrix), 100)
-	# 		y = -(self.w[0] * x + self.b) / self.w[1]
-	# 		plt.plot(x, y)
 
-	# 	plt.show()
+	def calculate_fx(self, x):
+		return self.sign(np.dot(self.w, x) + self.b)
+
+
+	def sign(self, x):
+		if x >=0:
+			return 1
+		return -1
+
 

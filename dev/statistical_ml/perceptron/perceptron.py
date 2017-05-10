@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# perceptron.py
+# perceptron_plt.py
 
 """
 Created by jin.xia on May 09 2017
@@ -8,59 +8,49 @@ Created by jin.xia on May 09 2017
 """
 
 
-import os
-import operator
 import numpy as np
+import matplotlib.pyplot as plt
+
+import perceptron_dual as per_dual
+import perceptron_primal as per_primal
 
 
-# 
-class perceptron:
-	def __init__(self, learning_rate=1):
-		self.learning_rate = learning_rate
-		self.w = []
-		self.b = 0
+def learning(X, Y, learning_rate=1, type='dual'):
+	per = per_dual.perceptron_dual(learning_rate)
+	if type == 'primal':
+		per = per_primal.perceptron_primal(learning_rate)
+	per.learning(X, Y)
+	return per
 
 
-	def learning(self, training_X, training_Y):
-		shape = training_X.shape
-		training_num = shape[0]
-		feature_num = shape[1]
-		self.w = [0] * feature_num
-		self.b = 0
-		
-		is_error = True
-		while is_error:
-			print('[percetron] try w b : ', self.w, self.b)
-			for i in range(training_num):
-				x, y = training_X[i], training_Y[i]
-				if self.is_classify_error(x, y):
-					self.update_w_b(x, y)
-					break
-				elif i == training_num - 1:
-					is_error = False
+def plt_scatter_line(X, Y, w, b, X_new, predictions, alpha=0.2):
+	fig = plt.figure()
+	fig.set(alpha=alpha)
+	plt_scatter(X, Y)
+	plt_sep_line(X, w, b)
+	plt_scatter(X_new, predictions, True)
+	plt.show()
 
 
-	def is_classify_error(self, x, y):
-		fx = self.calculate_fx(x)
-		loss = fx * y
-		return loss <= 0
+def plt_scatter(X, Y, is_new=False):
+	# deal X, Y for plot
+	num = X.shape[0]
+	X0 = np.array([X[i] for i in range(num) if Y[i]==-1])
+	X1 = np.array([X[i] for i in range(num) if Y[i]==1])
+	size = (is_new and  60) or 25
+	alpha = (is_new and 1) or 0.4
+	if X0.shape[0] >= 1:
+		plt.scatter(X0[:,0], X0[:,1], marker='x', s=size,
+			color='blue', alpha=alpha, label='x0')
+	if X1.shape[0] >= 1:
+		plt.scatter(X1[:,0], X1[:,1], marker='o', s=size,
+			color='red', alpha=alpha, label='x1')
 
 
-	def calculate_fx(self, x):
-		fx = 0
-		feature_num = len(x)
-		for i in range(feature_num):
-			fx += self.w[i] * x[i]
-		fx += self.b
-		return fx
-
-
-	def update_w_b(self, x, y):
-		feature_num = len(x)
-		for i in range(feature_num):
-			self.w[i] += self.learning_rate * x[i] * y
-		self.b += self.learning_rate * y
-
-
+def plt_sep_line(X, w, b):
+	axis_matrix = X[:,0]
+	x = np.linspace(np.min(axis_matrix), np.max(axis_matrix), 100)
+	y = -(w[0] * x + b) / w[1]
+	plt.plot(x, y)
 
 
