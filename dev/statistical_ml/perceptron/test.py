@@ -25,6 +25,7 @@ print(X)
 print(Y)
 
 
-# per = perceptron.learning(X, Y, type='primal')
-per = perceptron.learning(X, Y, type='dual')
-perceptron.plt_scatter_line(X, Y, per.w, per.b)
+per = perceptron.perceptron('primal')
+# per = perceptron.perceptron('dual')
+per.learning(X, Y)
+per.plt_scatter_line(X, Y)

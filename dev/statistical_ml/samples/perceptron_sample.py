@@ -30,14 +30,21 @@ Y = np.where(Y == 'Iris-setosa', -1, 1)
 
 
 print('------------------------------------------------------------learning')
-per = perceptron.learning(X, Y, type='primal')
-
+per = perceptron.perceptron('dual')
+per.learning(X, Y)
+# per.plt_scatter_line(X, Y)
 
 
 print('------------------------------------------------------------predict')
 X_new = np.array([[3,4],[5,6],[5,1]])
 predictions = per.predict(X_new)
 print(predictions)
+# 绘制带预测点的数据图
+axis_mat = np.append(X[:,0], X_new[:,0])
+minx, maxx = per.get_bounds(axis_mat)
+per.plt_scatter(X, Y)
+per.plt_line(minx, maxx)
+per.plt_scatter(X_new, predictions, alpha=1, size=50)
+per.plt_show()
 
-perceptron.plt_scatter_line(X, Y, per.w, per.b, X_new, predictions)
 

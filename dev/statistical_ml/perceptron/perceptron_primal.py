@@ -14,7 +14,7 @@ import numpy as np
 
 
 # 
-class perceptron_primal:
+class perceptron_primal():
 	def __init__(self, learning_rate=1):
 		self.learning_rate = learning_rate
 		self.w = []
@@ -27,7 +27,6 @@ class perceptron_primal:
 		feature_num = shape[1]
 		self.w = [0] * feature_num
 		self.b = 0
-		
 		is_error = True
 		while is_error:
 			print('[percetron] try w b : ', self.w, self.b)
@@ -38,6 +37,7 @@ class perceptron_primal:
 					break
 				elif i == training_num - 1:
 					is_error = False
+		return self.w, self.b
 
 
 	def is_classify_error(self, x, y):
@@ -60,20 +60,5 @@ class perceptron_primal:
 		for i in range(feature_num):
 			self.w[i] += self.learning_rate * x[i] * y
 		self.b += self.learning_rate * y
-
-
-	def predict(self, X):
-		num = X.shape[0]
-		return [self.calculate_fx(x) for x in X]
-
-
-	def calculate_fx(self, x):
-		return self.sign(np.dot(self.w, x) + self.b)
-
-
-	def sign(self, x):
-		if x >=0:
-			return 1
-		return -1
 
 

@@ -38,6 +38,7 @@ class perceptron_dual():
 				elif idx == training_num - 1:
 					self.calculate_w(training_X, training_Y)
 					is_error = False
+		return self.w, self.b
 
 
 	def calculate_gram_mat(self, training_X):
@@ -81,20 +82,5 @@ class perceptron_dual():
 	def update_α_b(self, idx, y):
 		self.α[idx] += self.learning_rate
 		self.b += self.learning_rate * y
-
-
-	def predict(self, X):
-		num = X.shape[0]
-		return [self.calculate_fx(x) for x in X]
-
-
-	def calculate_fx(self, x):
-		return self.sign(np.dot(self.w, x) + self.b)
-
-
-	def sign(self, x):
-		if x >=0:
-			return 1
-		return -1
 
 
