@@ -24,10 +24,10 @@ X, Y = generate_dataset()
 nb = bayes.naivebayes()
 nb.learning(X, Y)
 
-print(nb.get_tis_with_cfj(1, 3, 0))
-print(nb.get_tis_with_cfj(2, 5, 1))
-print(nb.get_px_for_clabel([3,5], 1))
-print(nb.get_px_for_clabel([3,5], 2))
+print(nb.get_ck_fj_tis(1, 3, 0))
+print(nb.get_ck_fj_tis(2, 5, 1))
+
+print(nb.predict([[3,5],[2,1]]))
 
 
 
