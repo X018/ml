@@ -30,7 +30,6 @@ def generate_dataset():
 			[3, 'L', -1]]
 	X = [d[:-1] for d in arr]
 	Y = [d[-1] for d in arr]
-	print(Y)
 	return X, Y
 
 
