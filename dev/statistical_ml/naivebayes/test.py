@@ -9,6 +9,7 @@ Created by jin.xia on May 13 2017
 
 
 import numpy as np
+import pandas as pd
 import naivebayes as bayes
 
 
@@ -28,8 +29,10 @@ def generate_dataset():
 			[3, 'M', 1],
 			[3, 'L', 1],
 			[3, 'L', -1]]
-	X = [d[:-1] for d in arr]
-	Y = [d[-1] for d in arr]
+	dataframe = pd.DataFrame(arr)
+	dataset = dataframe.iloc[:,:].values
+	X = dataset[:, :-1]
+	Y = dataset[:, -1]
 	return X, Y
 
 

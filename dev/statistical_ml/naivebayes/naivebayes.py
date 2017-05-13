@@ -47,13 +47,12 @@ class naivebayes():
 	def learning(self, training_X, training_Y):
 		self.training_X = training_X
 		self.training_Y = training_Y
-		self.training_num = len(self.training_X)
-		self.feature_num = len(self.training_X[0])
+		self.feature_num = self.training_X.shape[1]
+		self.training_num = self.training_X.shape[0]
 		# 输出空间
 		self.Y, self.tis_Y = self.generate_Y()
 		self.K = len(self.Y)
 		print(self.Y)
-		print(self.tis_Y)
 		# 输入空间
 		self.X = self.generate_X()
 		# 
