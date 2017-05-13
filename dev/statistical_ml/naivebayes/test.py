@@ -2,7 +2,7 @@
 # test.py
 
 """
-Created by jin.xia on May 09 2017
+Created by jin.xia on May 13 2017
 
 @author: jin.xia
 """
@@ -13,21 +13,31 @@ import naivebayes as bayes
 
 
 def generate_dataset():
-	arr = [[3,3,1], [4,3,1], [1,1,-1], [2,5,2]]
-	dataset = np.array(arr)
-	X = dataset[:,:-1]
-	Y = dataset[:,-1]
+	arr = [ [1, 'S', -1],
+			[1, 'M', -1],
+			[1, 'M', 1],
+			[1, 'S', 1],
+			[1, 'S', -1],
+			[2, 'S', -1],
+			[2, 'M', -1],
+			[2, 'M', 1],
+			[2, 'L', 1],
+			[2, 'L', 1],
+			[3, 'L', 1],
+			[3, 'M', 1],
+			[3, 'M', 1],
+			[3, 'L', 1],
+			[3, 'L', -1]]
+	X = [d[:-1] for d in arr]
+	Y = [d[-1] for d in arr]
+	print(Y)
 	return X, Y
 
 
 X, Y = generate_dataset()
-nb = bayes.naivebayes()
+nb = bayes.naivebayes(0)
 nb.learning(X, Y)
-
-print(nb.get_ck_fj_tis(1, 3, 0))
-print(nb.get_ck_fj_tis(2, 5, 1))
-
-print(nb.predict([[3,5],[2,1]]))
+print(nb.predict([[2,'S']]))
 
 
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# perceptron.py
+# naivebayes.py
 
 """
 Created by jin.xia on May 09 2017
@@ -14,155 +14,159 @@ import matplotlib.pyplot as plt
 
 class naivebayes():
 	"""
-	ti->training index(i)
-	fj->feature index(j)
-	cm->class lable index(m)
-	fjset->featurej set
-	features_set->feature set [feature_num]=featurej set
-	fjsetn->fjset index(n)
+	X:	输入空间 []
+	Xi(x):	多个输入变量的第i个
+	XJ:	X的第J个特征空间[XJ1, XJ2, ..., XJN] 特殊可取值类型数量为N
+	tis_XJ:	输出空间 {XJ1:[t1, t3, ...], ..., XJN:[t1, t3, ...])}
+	xj:	x的第j个特征
 
-	xi->X[i]
-	xj->xi[j]
-	xij->X[i][j]
-	yk->Y[k]
-	cln->clabels[n]
+	K:		Y的可能取值数量
+	Y:		输出空间 [c1, c2, ..., ck]
+	tis_Y:	输出空间 {c1:[t1, t3, ...], ..., ck:[t1, t3, ...])}
+
+	training_X->
+	training_Y->
 	"""
 	def __init__(self, λ=1):
 		super(naivebayes, self).__init__()
 		self.λ = λ
-		# self.training_X = np.array([])
-		# self.training_Y = np.array([])
-		# self.feature_dict = {}
-		# self.label_dict = {}
-		# self.lf_dict = {}
+		# 输出空间 
+		self.K = 0
+		self.Y = []
+		self.tis_Y = {}
+		self.K = len(self.Y)
+		self.X = []
+		self.XY = {}
+
+		self.training_X = []
+		self.training_Y = []
+		self.feature_num = 0
+		self.training_num = 0
 
 
 	def learning(self, training_X, training_Y):
 		self.training_X = training_X
 		self.training_Y = training_Y
-		self.feature_num = self.training_X.shape[1]
-		self.training_num = self.training_X.shape[0]
+		self.training_num = len(self.training_X)
+		self.feature_num = len(self.training_X[0])
+		# 输出空间
+		self.Y, self.tis_Y = self.generate_Y()
+		self.K = len(self.Y)
+		print(self.Y)
+		print(self.tis_Y)
+		# 输入空间
+		self.X = self.generate_X()
+		# 
+		self.XY = self.generate_XY()
 
-		self.clabel_tis_dict = self.generate_clabel_tis_dict()
-		print(self.clabel_tis_dict)
-
-		self.fallset_tis_arr = self.generate_fallset_tis_arr()
-		print(self.fallset_tis_arr)
-
-		self.call_fall_tis_dict = self.generate_call_fall_tis_dict()
-		# for (clabel, idxs) in self.clabel_tis_dict.items():
-		# 	self.lf_dict[clabel] = self.generate_cfjs_for_clabel(clabel)
-		# print(self.lf_dict)
+		
+	def predict(self, X):
+		return [self.get_max_pxy_for_Y(x) for x in X]
 
 
 	# P(Y=clabel)的training的idx索引字典(training_idx_dict)
-	def generate_clabel_tis_dict(self):
-		clabel_tis_dict = {}
+	def generate_Y(self):
+		tis_Y = {}
 		for i in range(self.training_num):
 			ck = self.training_Y[i]
-			clabel_tis_dict.setdefault(ck, [])
-			clabel_tis = clabel_tis_dict[ck]
-			clabel_tis.append(i)
-		return clabel_tis_dict
+			tis_Y.setdefault(ck, [])
+			tis = tis_Y[ck]
+			tis.append(i)
+		Y = tis_Y.keys()
+		return Y, tis_Y
+
+
+	def generate_X(self):
+		X = []
+		for j in range(self.feature_num):
+			XJ, tis_XJ = self.generate_XJ(j)
+			X.append(tis_XJ)
+		return X
 
 
 	# P(X=xjm)的training的idx索引列表(training_idxs)
-	def generate_fjset_tis_dict(self, j):
-		fjset_tis_dict = {}
+	def generate_XJ(self, j):
+		tis_XJ = {}
 		for i in range(self.training_num):
 			feature = self.training_X[i][j]
-			fjset_tis_dict.setdefault(feature, [])
-			fjset_tis = fjset_tis_dict[feature]
-			fjset_tis.append(i)
-		return fjset_tis_dict
+			tis_XJ.setdefault(feature, [])
+			tis = tis_XJ[feature]
+			tis.append(i)
+		XJ = tis_XJ.keys()
+		return XJ, tis_XJ
 
 
-	def generate_fallset_tis_arr(self):
-		fallset_tis_arr = []
+	def generate_XY(self):
+		YX = {}
+		for y in self.Y:
+			YX[y] = self.generate_Xy(y)
+		return YX
+
+
+	def generate_Xy(self, y):
+		Xy = []
 		for j in range(self.feature_num):
-			fallset_tis_arr.append(self.generate_fjset_tis_dict(j))
-		return fallset_tis_arr
+			Xy.append(self.generateXJy(j, y))
+		return Xy
 
 
-	def generate_ck_fj_tis_dict(self, ck, j):
-		ck_fj_tis_dict = {}
-		ck_tis = self.get_tis_for_ck(ck)
-		fjset_tis_dict = self.get_fjset_tis_dict(j)
-		for (feature, feature_tis) in fjset_tis_dict.items():
-			ck_fj_tis_dict[feature] = [ti for ti in ck_tis if ti in feature_tis]
-		return ck_fj_tis_dict
+	def generateXJy(self, j, y):
+		tis_XJy = {}
+		tis_y = self.get_tis_y(y)
+		tis_XJ = self.get_tisXJ(j)
+		for (feature, tis_XJn) in tis_XJ.items():
+			tis_XJy[feature] = [ti for ti in tis_y if ti in tis_XJn]
+		return tis_XJy
+
+	############################################################################################### 
+	def get_tis_y(self, y):
+		return self.tis_Y[y]
 
 
-	def generate_ck_fall_tis_arr(self, ck):
-		ck_fall_tis_arr = []
-		for j in range(self.feature_num):
-			ck_fall_tis_arr.append(self.generate_ck_fj_tis_dict(ck, j))
-		return ck_fall_tis_arr
-
-
-	def generate_call_fall_tis_dict(self):
-		call_fall_tis_dict = {}
-		for (ck, tis) in self.clabel_tis_dict.items():
-			call_fall_tis_dict[ck] = self.generate_ck_fall_tis_arr(ck)
-		return call_fall_tis_dict
-
-
-
-	def get_tis_for_ck(self, ck):
-		return self.clabel_tis_dict[ck]
-
-
-	def get_fjset_tis_dict(self, j):
-		return self.fallset_tis_arr[j]
-
+	def get_tisXJ(self, j):
+		return self.X[j]
 
 	# P(Xj=feature|Y=cabel) 指定特征值数量
 	# 条件为类型取clabel时，第j维特征值取feature的training_X的i索引列表(training_idxs)
-	def get_ck_fj_tis(self, ck, feature, j):
-		ck_fall_tis_arr = self.call_fall_tis_dict[ck]
-		ck_fj_tis_dict = ck_fall_tis_arr[j]
-		return ck_fj_tis_dict[feature]
+	def get_tis_XJy_feature(self, y, j, feature):
+		Xy = self.XY[y]
+		XJy = Xy[j]
+		return XJy[feature]
 
 
-	def get_p_ck(self, ck):
-		ck_tis = self.get_tis_for_ck(ck)
-		total_num = self.training_num
-		ck_num = len(ck_tis)
-		return ck_num / total_num
+	# P(Y=y)
+	def get_py(self, y):
+		numberator = self.training_num + self.λ * self.K
+		fractions = len(self.get_tis_y(y)) + self.λ
+		return fractions / numberator
 
 
-	# P(X=x|Y=clabel) 独立同分布
-	# 条件为类型取clabel时x的概率分布
-	def get_p_ck_x(self, ck, x):
-		p = 1
-		ck_num = len(self.get_tis_for_ck(ck))
-		for j in range(len(x)):
-			fjset_num = len(self.get_fjset_tis_dict(j))
-			total_num = ck_num + self.λ * fjset_num
-			tis = self.get_ck_fj_tis(ck, x[j], j)
-			feature_num = len(tis) + self.λ
-			p *= feature_num / total_num
-		return p
+	# P(X=x|Y=y) 独立同分布
+	# 条件为类型取y时x的概率分布
+	def get_px_y(self, y, x):
+		px = 1
+		num_y = len(self.get_tis_y(y))
+		for j in range(self.feature_num):
+			num_XJ = len(self.get_tisXJ(j))
+			tis = self.get_tis_XJy_feature(y, j, x[j])
+			numberator = num_y + self.λ * num_XJ
+			fractions = len(tis) + self.λ
+			px *= fractions / numberator
+		return px
 
 
-	def get_p_call_x(self, x):
-		p_dict = {}
-		for (ck, tis) in self.clabel_tis_dict.items():
-			p = self.get_p_ck_x(ck, x)
-			p_dict[ck] = p
-		return p_dict
+	def get_pxy(self, y, x):
+		px_y = self.get_px_y(y, x)
+		py = self.get_py(y)
+		return px_y * py
 
 
-	def get_ck_with_maxp(self, x):
-		p_ck, p_max = 0, 0
-		p_dict = self.get_p_call_x(x)
-		for (ck, p) in p_dict.items():
-			if p > p_max:
-				p_max = p
-				p_ck = ck
-		return p_ck, p_max
+	def get_pxy_dict_for_Y(self, x):
+		return {y:self.get_pxy(y, x) for y in self.Y}
 
 
-	def predict(self, X):
-		return [self.get_ck_with_maxp(x) for x in X]
+	def get_max_pxy_for_Y(self, x):
+		pxy_dict = self.get_pxy_dict_for_Y(x)
+		return max(pxy_dict.items(), key=lambda a: a[1])[0]
+
 
