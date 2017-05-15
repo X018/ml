@@ -40,6 +40,7 @@ X, Y = generate_dataset()
 nb = bayes.naivebayes(0)
 nb.learning(X, Y)
 print(nb.predict([[2,'S']]))
+nb.plt_pxy_for_Y([[2,'S']])
 
 
 

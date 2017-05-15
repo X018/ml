@@ -169,3 +169,15 @@ class naivebayes():
 		return max(pxy_dict.items(), key=lambda a: a[1])[0]
 
 
+
+	############################################################################################### 
+	def plt_pxy_for_Y(self, X):
+		for x in X:
+			pxy_dict = self.get_pxy_dict_for_Y(x)
+			print(pxy_dict)
+			pltx = np.array([y for (y, p) in pxy_dict.items()])
+			plty = np.array([p for (y, p) in pxy_dict.items()])
+			plt.scatter(pltx, plty)
+		plt.show()
+
+
